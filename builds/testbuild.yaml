@@ -1,0 +1,106 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#            YAML Configuration for a Novel Manuscript        #
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+# This file acts as the central blueprint for your novel.
+# It defines metadata, author details, and the precise order
+# and inclusion of all text files that make up the manuscript.
+# It's designed to be read by a script (e.g., Python, Ruby)
+# or a tool like Pandoc to compile the final manuscript document.
+
+#=============================================================#
+# METADATA: Information for the Title Page & Rights           #
+#=============================================================#
+metadata:
+  title: The Last Signal
+  subtitle: A Chronicle of the Void
+  byline: Jane Q. Novelist
+  genre: Science Fiction
+  word_count: 93000
+
+#=============================================================#
+# AUTHOR & AGENT: Contact Information                         #
+#=============================================================#
+# This information typically appears on the top-left
+# of a standard manuscript title page.
+author:
+  legal_name: Jane Quinn Novelist
+  pen_name: Jane Q. Novelist
+  # The pipe character preserves newlines for multi-line strings.
+  address: |
+    123 Literary Lane
+    New York, NY 10001
+  phone: (212) 555-0123
+  email: jane.q.novelist@email.com
+  website: https://janeqnovelist.com
+
+# Agent information (optional, can be commented out if not applicable).
+agent:
+  name: John Agentman
+  agency: The Best Words Literary Agency
+  address: |
+    456 Publishing Row
+    New York, NY 10002
+  phone: (212) 555-0456
+  email: john.agentman@bestwords.lit
+
+#=============================================================#
+# MANUSCRIPT STRUCTURE: The Blueprint of Your Book            #
+#=============================================================#
+# This is the core of the configuration. It defines the
+# sequence of files to be included in the final manuscript.
+# The `type` key helps a compiler tool know how to format each section.
+
+structure:
+  #----------- STANDALONE CHAPTER (PROLOGUE) -----------#
+  - type: chapter
+    title: "Prologue"
+    file: "tests/lorem.md"
+
+  #----------- BOOK PARTS & CHAPTERS -----------#
+  - type: part
+    title: "Part One: Echoes"
+    # Each part contains a list of its content.
+    content:
+      - type: chapter
+        number: 1
+        title: "A Ship in the Dark"
+        file: "tests/lorem.md"
+      - type: chapter
+        number: 2
+        title: "Whispers on the Comms"
+        files:
+          - "tests/lorem.md"
+          - "tests/lorem.md"
+          - "tests/lorem.md"
+      - type: chapter
+        number: 3
+        file: "tests/lorem.md"
+
+  - type: part
+    title: "Part Two: The Signal"
+    content:
+      - type: chapter
+        number: 4
+        file: "tests/lorem.md"
+      - type: chapter
+        number: 5
+        title: "The Message"
+        file: "tests/lorem.md"
+      - type: chapter
+        number: 6
+        file: "tests/lorem.md"
+
+  - type: part
+    title: "Part Three: Silence"
+    content:
+      - type: chapter
+        number: 7
+        title: "Alone"
+        file: "tests/lorem.md"
+      - type: chapter
+        number: 8
+        file: "tests/lorem.md"
+      - type: chapter
+        number: 9
+        title: "The Final Broadcast"
+        file: "tests/lorem.md"
