@@ -15,7 +15,9 @@ metadata:
   subtitle: A Chronicle of the Void
   byline: Jane Q. Novelist
   genre: Science Fiction
-  word_count: 93000
+  short_title: The Last Signal
+  last_name: Novelist
+  file_name: test_manuscript.docx
 
 #=============================================================#
 # AUTHOR & AGENT: Contact Information                         #
@@ -26,9 +28,8 @@ author:
   legal_name: Jane Quinn Novelist
   pen_name: Jane Q. Novelist
   # The pipe character preserves newlines for multi-line strings.
-  address: |
-    123 Literary Lane
-    New York, NY 10001
+  street_address: 123 Literary Lane
+  city_state_zip: New York, NY 10001
   phone: (212) 555-0123
   email: jane.q.novelist@email.com
   website: https://janeqnovelist.com
@@ -37,9 +38,8 @@ author:
 agent:
   name: John Agentman
   agency: The Best Words Literary Agency
-  address: |
-    456 Publishing Row
-    New York, NY 10002
+  street_address: 456 Publishing Row
+  city_state_zip: New York, NY 10002
   phone: (212) 555-0456
   email: john.agentman@bestwords.lit
 
