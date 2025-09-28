@@ -313,7 +313,7 @@ def compile_manuscript(config_file, output_dir):
     print(f"\nCompilation complete! Manuscript saved to '{output_path}'.")
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(
         description="Compiles a novel manuscript from a YAML configuration file into a single .docx file."
     )
@@ -330,3 +330,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     compile_manuscript(args.config_file, args.output_dir)
+
+
+if __name__ == "__main__":
+    main()
