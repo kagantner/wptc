@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "markdown-manuscript-formatter"
+version = "0.1.0"
+authors = [
+  { name="Karl Gantner", email="karl@karlgantner.com" }, # Replace with your details
+]
+description = "A tool to compile a novel manuscript from YAML and Markdown into a .docx file."
+readme = "readme.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License", # Choose a license
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pyyaml",
+    "python-docx",
+    "smartypants",
+]
+
+[project.scripts]
+mdmf = "my_cli_tool.main:main"

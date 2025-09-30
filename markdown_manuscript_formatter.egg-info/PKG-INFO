@@ -1,0 +1,135 @@
+Metadata-Version: 2.4
+Name: markdown-manuscript-formatter
+Version: 0.1.0
+Summary: A tool to compile a novel manuscript from YAML and Markdown into a .docx file.
+Author-email: Karl Gantner <karl@karlgantner.com>
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: pyyaml
+Requires-Dist: python-docx
+Requires-Dist: smartypants
+
+# Manuscript Compiler
+
+A Python script to compile a novel or long-form manuscript from a YAML configuration and individual Markdown files into a single, professionally formatted `.docx` file.
+
+## Features
+
+*   **YAML Configuration**: Define your manuscript's structure, metadata, author info, and file order in a single, easy-to-read YAML file.
+*   **Standard Manuscript Formatting**: Automatically generates a document with Times New Roman, 12pt font, and double-spaced lines.
+*   **Automatic Title Page**: Creates a standard title page with author contact info and an automatically calculated approximate word count.
+*   **Headers**: Adds a right-aligned header (`LastName | Short Title | PageNumber`) to every page after the title page.
+*   **Chapter and Part Generation**: Correctly formats and adds Part and Chapter headings.
+*   **Simple Markdown Support**: Supports `*italic*`, `_italic_`, `**bold**`, and `***bold-italic***` within your text files.
+*   **Smart Typography**: Uses `smartypants` to convert plain quotes and dashes into professional curly quotes and em-dashes.
+
+## Setup and Installation
+
+This script requires Python 3.
+
+1.  **Clone the repository or download the files.**
+
+2.  **Set up a virtual environment (recommended):**
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate  # On Windows, use: .venv\Scripts\activate
+    ```
+
+3.  **Create a `requirements.txt` file** in your project directory with the following content:
+    ```
+    PyYAML
+    python-docx
+    smartypants
+    ```
+
+4.  **Install the required packages:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+## YAML Configuration
+
+The entire manuscript is defined by a YAML configuration file (e.g., `builds/testbuild.yaml`). This file has three main sections:
+
+### `metadata`
+
+Contains information for the title page and document properties.
+
+```yaml
+metadata:
+  title: The Last Signal
+  byline: Jane Q. Novelist
+  short_title: The Last Signal  # For the page header
+  last_name: Novelist          # For the page header
+  file_name: my_manuscript.docx # The name of the output file
+```
+
+### `author` & `agent`
+
+Contact information that appears on the title page. The `agent` section is optional and will be ignored if not present.
+
+```yaml
+author:
+  legal_name: Jane Quinn Novelist
+  street_address: 123 Literary Lane
+  city_state_zip: New York, NY 10001
+  phone: (212) 555-0123
+  email: jane.q.novelist@email.com
+
+agent:
+  name: John Agentman
+  agency: The Best Words Literary Agency
+  # ... and so on
+```
+
+### `structure`
+
+This is the blueprint of your book, defining the order of parts and chapters.
+
+*   **Parts**: Use `type: part` to create a part title page. A part contains a `content` list of chapters.
+*   **Chapters**: Use `type: chapter` to define a chapter.
+    *   `number` and `title` are used to generate the chapter heading (e.g., "Chapter 1: A Ship in the Dark"). Both are optional.
+    *   `file`: Use for a chapter contained in a single text file.
+    *   `files`: Use for a chapter composed of multiple scenes from different files. A scene break (`#`) will be automatically inserted between them.
+
+```yaml
+structure:
+  # A standalone chapter (e.g., a prologue)
+  - type: chapter
+    title: "Prologue"
+    file: "prologue.md"
+
+  # A part containing multiple chapters
+  - type: part
+    title: "Part One: Echoes"
+    content:
+      - type: chapter
+        number: 1
+        title: "A Ship in the Dark"
+        file: "chapter1.md"
+      - type: chapter
+        number: 2
+        title: "Whispers on the Comms"
+        files:
+          - "scene1.md"
+          - "scene2.md"
+```
+
+## Usage
+
+Run the compiler from your terminal, providing the path to your YAML configuration file and the desired output directory.
+
+**Syntax:**
+```bash
+python compiler.py [path/to/config.yaml] [path/to/output_directory]
+```
+
+**Example:**
+```bash
+python compiler.py builds/testbuild.yaml builds/
+```
+
+This command will read `builds/testbuild.yaml`, process all the specified text files, and generate a single `.docx` file inside the `builds/` directory.
