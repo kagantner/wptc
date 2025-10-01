@@ -18,6 +18,7 @@ metadata:
   short_title: The Last Signal
   last_name: Novelist
   file_name: test_manuscript.docx
+  story_type: Novel
 
 #=============================================================#
 # AUTHOR & AGENT: Contact Information                         #
@@ -54,7 +55,7 @@ structure:
   #----------- STANDALONE CHAPTER (PROLOGUE) -----------#
   - type: chapter
     title: "Prologue"
-    file: "tests/lorem.md"
+    file: "lorem.md"
 
   #----------- BOOK PARTS & CHAPTERS -----------#
   - type: part
@@ -64,31 +65,31 @@ structure:
       - type: chapter
         number: 1
         title: "A Ship in the Dark"
-        file: "tests/lorem.md"
+        file: "lorem.md"
       - type: chapter
         number: 2
         title: "Whispers on the Comms"
         files:
-          - "tests/lorem.md"
-          - "tests/lorem.md"
-          - "tests/lorem.md"
+          - "lorem.md"
+          - "lorem.md"
+          - "lorem.md"
       - type: chapter
         number: 3
-        file: "tests/lorem.md"
+        file: "lorem.md"
 
   - type: part
     title: "Part Two: The Signal"
     content:
       - type: chapter
         number: 4
-        file: "tests/lorem.md"
+        file: "lorem.md"
       - type: chapter
         number: 5
         title: "The Message"
-        file: "tests/lorem.md"
+        file: "lorem.md"
       - type: chapter
         number: 6
-        file: "tests/lorem.md"
+        file: "lorem.md"
 
   - type: part
     title: "Part Three: Silence"
@@ -96,11 +97,11 @@ structure:
       - type: chapter
         number: 7
         title: "Alone"
-        file: "tests/lorem.md"
+        file: "lorem.md"
       - type: chapter
         number: 8
-        file: "tests/lorem.md"
+        file: "lorem.md"
       - type: chapter
         number: 9
         title: "The Final Broadcast"
-        file: "tests/lorem.md"
+        file: "lorem.md"

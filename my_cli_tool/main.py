@@ -41,7 +41,7 @@ def add_smart_text(paragraph, text):
             run.bold = is_bold
             run.italic = is_italic
 
-def create_title_page(config, doc):
+def create_title_page(config, doc, story_type):
     """Generates a standard manuscript title page."""
     author = config.get('author', {})
     metadata = config.get('metadata', {})
@@ -112,7 +112,12 @@ def create_title_page(config, doc):
     p_byline = doc.add_paragraph(byline)
     p_byline.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
-    doc.add_page_break()
+    if story_type == 'novel':
+        doc.add_page_break()
+    else: # For short stories, add spacing before the text starts on the same page.
+        doc.add_paragraph()
+        doc.add_paragraph()
+        doc.add_paragraph()
 
 def setup_header(doc, config):
     """
@@ -183,7 +188,7 @@ def append_file_content(filepath, doc):
     except Exception as e:
         print(f"--> ERROR: An error occurred reading {filepath}: {e}")
 
-def process_chapter(chapter_data, doc):
+def process_chapter(chapter_data, doc, story_type):
     """Processes a chapter dictionary and writes its content to the document."""
     heading = []
     if 'number' in chapter_data:
@@ -197,7 +202,8 @@ def process_chapter(chapter_data, doc):
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         run = p.add_run(full_heading)
         run.bold = True
-        doc.add_paragraph() # Add space after heading
+        # Add space after heading
+        doc.add_paragraph()
 
     if 'file' in chapter_data:
         append_file_content(chapter_data['file'], doc)
@@ -249,6 +255,7 @@ def compile_manuscript(config_file, output_dir):
         
     # Get the output filename from the config, with a sensible default.
     metadata = config.get('metadata', {})
+    story_type = metadata.get('story_type', 'novel').lower() # Default to 'novel' and ensure lowercase
     output_filename = metadata.get('file_name', 'manuscript.docx')
     output_path = os.path.join(output_dir, output_filename)
 
@@ -263,7 +270,7 @@ def compile_manuscript(config_file, output_dir):
     setup_header(doc, config)
 
     # 2. Create the title page
-    create_title_page(config, doc)
+    create_title_page(config, doc, story_type)
 
     is_first_content_item = True
 
@@ -273,8 +280,11 @@ def compile_manuscript(config_file, output_dir):
 
         # Add a page break before any top-level part or chapter,
         # except for the very first one after the title page.
-        if not is_first_content_item:
+        if not is_first_content_item and story_type == 'novel':
             doc.add_page_break()
+        elif not is_first_content_item and story_type == 'short_story':
+            # For short stories, use line breaks instead of a page break
+            doc.add_paragraph()
         is_first_content_item = False
         
         if item_type == 'part':
@@ -283,18 +293,21 @@ def compile_manuscript(config_file, output_dir):
             p.alignment = WD_ALIGN_PARAGRAPH.CENTER
             run = p.add_run(part_title)
             run.bold = True
+            # Add space after part title
             doc.add_paragraph()
             
             # Process chapters within the part.
             chapters_in_part = item.get('content', [])
             for i, chapter in enumerate(chapters_in_part):
                 # Add a page break ONLY if it's not the first chapter of the part.
-                if i > 0:
+                if i > 0 and story_type == 'novel':
                     doc.add_page_break()
-                process_chapter(chapter, doc)
+                elif i > 0 and story_type == 'short_story':
+                    doc.add_paragraph()
+                process_chapter(chapter, doc, story_type)
         
         elif item_type == 'chapter':
-            process_chapter(item, doc)
+            process_chapter(item, doc, story_type)
         
         else:
             print(f"--> WARNING: Unknown structure type '{item_type}' found. Skipping.")
