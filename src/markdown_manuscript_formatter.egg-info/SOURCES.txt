@@ -1,0 +1,10 @@
+pyproject.toml
+readme.md
+src/markdown_manuscript_formatter.egg-info/PKG-INFO
+src/markdown_manuscript_formatter.egg-info/SOURCES.txt
+src/markdown_manuscript_formatter.egg-info/dependency_links.txt
+src/markdown_manuscript_formatter.egg-info/entry_points.txt
+src/markdown_manuscript_formatter.egg-info/requires.txt
+src/markdown_manuscript_formatter.egg-info/top_level.txt
+src/my_cli_tool/__init__.py
+src/my_cli_tool/main.py

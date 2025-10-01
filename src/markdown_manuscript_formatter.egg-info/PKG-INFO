@@ -1,3 +1,17 @@
+Metadata-Version: 2.4
+Name: markdown-manuscript-formatter
+Version: 0.2.0
+Summary: A Python script to format markdown files into standard manuscript format for submitting fiction.
+Author-email: Karl Gantner <karl@karlgantner.com>
+License: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: PyYAML
+Requires-Dist: python-docx
+Requires-Dist: smartypants
+
 # Manuscript Compiler
 
 A Python script to compile a novel or long-form manuscript from a YAML configuration and individual Markdown files into a single, professionally formatted `.docx` file.

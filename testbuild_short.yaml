@@ -52,56 +52,5 @@ agent:
 # The `type` key helps a compiler tool know how to format each section.
 
 structure:
-  #----------- STANDALONE CHAPTER (PROLOGUE) -----------#
-  - type: chapter
-    title: "Prologue"
-    file: "lorem.md"
-
-  #----------- BOOK PARTS & CHAPTERS -----------#
-  - type: part
-    title: "Part One: Echoes"
-    # Each part contains a list of its content.
-    content:
-      - type: chapter
-        number: 1
-        title: "A Ship in the Dark"
-        file: "lorem.md"
-      - type: chapter
-        number: 2
-        title: "Whispers on the Comms"
-        files:
-          - "lorem.md"
-          - "lorem.md"
-          - "lorem.md"
-      - type: chapter
-        number: 3
-        file: "lorem.md"
-
-  - type: part
-    title: "Part Two: The Signal"
-    content:
-      - type: chapter
-        number: 4
-        file: "lorem.md"
-      - type: chapter
-        number: 5
-        title: "The Message"
-        file: "lorem.md"
-      - type: chapter
-        number: 6
-        file: "lorem.md"
-
-  - type: part
-    title: "Part Three: Silence"
-    content:
-      - type: chapter
-        number: 7
-        title: "Alone"
-        file: "lorem.md"
-      - type: chapter
-        number: 8
-        file: "lorem.md"
-      - type: chapter
-        number: 9
-        title: "The Final Broadcast"
-        file: "lorem.md"
+  - type: text
+    file: lorem.md
