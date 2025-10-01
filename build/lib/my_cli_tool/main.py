@@ -204,14 +204,24 @@ def process_chapter(chapter_data, doc, story_type):
         run.bold = True
         # Add space after heading
         doc.add_paragraph()
-        if story_type == 'short_story':
-            # Add one extra line break for short story format
-            doc.add_paragraph()
 
     if 'file' in chapter_data:
         append_file_content(chapter_data['file'], doc)
     elif 'files' in chapter_data:
         file_paths = chapter_data.get('files', [])
+        for i, file_path in enumerate(file_paths):
+            append_file_content(file_path, doc)
+            # Add a scene break if this is NOT the last file in the list.
+            if i < len(file_paths) - 1:
+                p = doc.add_paragraph('#')
+                p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
+def process_text_item(text_data, doc):
+    """Processes a text item dictionary and writes its content to the document."""
+    if 'file' in text_data:
+        append_file_content(text_data['file'], doc)
+    elif 'files' in text_data:
+        file_paths = text_data.get('files', [])
         for i, file_path in enumerate(file_paths):
             append_file_content(file_path, doc)
             # Add a scene break if this is NOT the last file in the list.
@@ -288,7 +298,6 @@ def compile_manuscript(config_file, output_dir):
         elif not is_first_content_item and story_type == 'short_story':
             # For short stories, use line breaks instead of a page break
             doc.add_paragraph()
-            doc.add_paragraph()
         is_first_content_item = False
         
         if item_type == 'part':
@@ -299,8 +308,6 @@ def compile_manuscript(config_file, output_dir):
             run.bold = True
             # Add space after part title
             doc.add_paragraph()
-            if story_type == 'short_story':
-                doc.add_paragraph()
             
             # Process chapters within the part.
             chapters_in_part = item.get('content', [])
@@ -310,12 +317,14 @@ def compile_manuscript(config_file, output_dir):
                     doc.add_page_break()
                 elif i > 0 and story_type == 'short_story':
                     doc.add_paragraph()
-                    doc.add_paragraph()
                 process_chapter(chapter, doc, story_type)
         
         elif item_type == 'chapter':
             process_chapter(item, doc, story_type)
         
+        elif item_type == 'text':
+            process_text_item(item, doc)
+
         else:
             print(f"--> WARNING: Unknown structure type '{item_type}' found. Skipping.")
     

@@ -216,6 +216,19 @@ def process_chapter(chapter_data, doc, story_type):
                 p = doc.add_paragraph('#')
                 p.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
+def process_text_item(text_data, doc):
+    """Processes a text item dictionary and writes its content to the document."""
+    if 'file' in text_data:
+        append_file_content(text_data['file'], doc)
+    elif 'files' in text_data:
+        file_paths = text_data.get('files', [])
+        for i, file_path in enumerate(file_paths):
+            append_file_content(file_path, doc)
+            # Add a scene break if this is NOT the last file in the list.
+            if i < len(file_paths) - 1:
+                p = doc.add_paragraph('#')
+                p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+
 def calculate_and_update_word_count(doc):
     """
     Calculates the total word count of the document and replaces the placeholder
@@ -309,6 +322,9 @@ def compile_manuscript(config_file, output_dir):
         elif item_type == 'chapter':
             process_chapter(item, doc, story_type)
         
+        elif item_type == 'text':
+            process_text_item(item, doc)
+
         else:
             print(f"--> WARNING: Unknown structure type '{item_type}' found. Skipping.")
     

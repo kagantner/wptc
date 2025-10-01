@@ -1,0 +1,2 @@
+[console_scripts]
+mdmf = my_cli_tool.main:main
