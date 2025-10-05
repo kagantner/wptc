@@ -174,6 +174,8 @@ def append_file_content(filepath, doc):
                     continue # Skip empty lines between paragraphs
                 if re.match(r'^#{1,6}\s', para_text):
                     continue # Skip markdown headings
+                if para_text.startswith('%'):
+                    continue # Skip comment lines
 
                 p = doc.add_paragraph()
                 # Set standard manuscript formatting
