@@ -26,26 +26,40 @@ A Python script to compile a novel or long-form manuscript from a YAML configura
 *   **Simple Markdown Support**: Supports `*italic*`, `_italic_`, `**bold**`, and `***bold-italic***` within your text files.
 *   **Smart Typography**: Uses `smartypants` to convert plain quotes and dashes into professional curly quotes and em-dashes.
 
-## Setup and Installation
+## Installation
 
 This script requires Python 3.
 
 1.  **Clone the repository or download the files.**
 
-2.  **Install the build tool:**
+2.  **Install the tool.**
+    Navigate to the root directory of the project (the one containing `pyproject.toml`) and run:
     ```bash
-    pip install --upgrade build
+    pip install .
+    ```
+    For development, you can install it in "editable" mode, which allows you to test your changes without reinstalling:
+    ```bash
+    pip install -e .
     ```
 
-3.  **Install `pipx` (if you don't have it already):**
-    ```bash
-    pip install --user pipx
-    python -m pipx ensurepath
-    ```
+## Usage
+
+Once installed, you can run the compiler from your terminal, providing the path to your YAML configuration file and the desired output directory.
+
+```bash
+mdmf [path/to/config.yaml] [path/to/output_directory]
+```
+
+**Example:**
+```bash
+mdmf testbuild_novel.yaml build/
+```
+
+This command will read `testbuild_novel.yaml`, process all the specified text files, and generate a single `.docx` file inside the `build/` directory.
 
 ## YAML Configuration
 
-The entire manuscript is defined by a YAML configuration file (e.g., `builds/testbuild.yaml`). This file has three main sections:
+The entire manuscript is defined by a YAML configuration file (e.g., `testbuild_novel.yaml`). This file has three main sections:
 
 ### `metadata`
 
@@ -110,22 +124,3 @@ structure:
           - "scene1.md"
           - "scene2.md"
 ```
-
-## Usage
-
-Run the compiler from your terminal, providing the path to your YAML configuration file and the desired output directory.
-
-### Option 1: Running as a Local Script
-
-If you just want to run the script directly without installing it.
-
-```bash
-python src/my_cli_tool/main.py [path/to/config.yaml] [path/to/output_directory]
-```
-
-**Example:**
-```bash
-python compiler.py builds/testbuild.yaml builds/
-```
-
-This command will read `builds/testbuild.yaml`, process all the specified text files, and generate a single `.docx` file inside the `builds/` directory.

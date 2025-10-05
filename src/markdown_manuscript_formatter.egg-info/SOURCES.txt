@@ -1,5 +1,6 @@
 pyproject.toml
 readme.md
+setup.py
 src/markdown_manuscript_formatter.egg-info/PKG-INFO
 src/markdown_manuscript_formatter.egg-info/SOURCES.txt
 src/markdown_manuscript_formatter.egg-info/dependency_links.txt
