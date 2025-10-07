@@ -1,0 +1,21 @@
+metadata:
+  title: My Test Novel
+  byline: Test Author
+  short_title: Test Novel
+  last_name: Author
+  file_name: test_output.docx
+
+author:
+  legal_name: Test Author
+  email: test@author.com
+
+structure:
+  - type: chapter
+    title: "Prologue"
+    file: "tests/prologue.md"
+  - type: chapter
+    number: 1
+    title: "The First Chapter"
+    files:
+      - "tests/chapter1_part1.md"
+      - "tests/chapter1_part2.md"

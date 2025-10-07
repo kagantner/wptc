@@ -9,3 +9,4 @@ src/markdown_manuscript_formatter.egg-info/requires.txt
 src/markdown_manuscript_formatter.egg-info/top_level.txt
 src/my_cli_tool/__init__.py
 src/my_cli_tool/main.py
+tests/test_main.py
