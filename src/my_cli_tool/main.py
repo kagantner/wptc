@@ -284,8 +284,10 @@ def compile_manuscript(config_file, output_dir):
     # Add the header to pages > 1
     setup_header(doc, config)
 
-    # 2. Create the title page
-    create_title_page(config, doc, story_type)
+    # 2. Create the title page (if requested)
+    include_title_page = metadata.get('include_title_page', True)
+    if include_title_page:
+        create_title_page(config, doc, story_type)
 
     is_first_content_item = True
 
@@ -336,7 +338,8 @@ def compile_manuscript(config_file, output_dir):
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     
     # 4. Calculate final word count and update the title page
-    calculate_and_update_word_count(doc)
+    if include_title_page:
+        calculate_and_update_word_count(doc)
 
     # 5. Save the document
     doc.save(output_path)

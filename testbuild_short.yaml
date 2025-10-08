@@ -19,6 +19,7 @@ metadata:
   last_name: Novelist
   file_name: test_short_story.docx
   story_type: short_story
+  include_title_page: false
 
 #=============================================================#
 # AUTHOR & AGENT: Contact Information                         #
