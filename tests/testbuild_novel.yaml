@@ -17,9 +17,9 @@ metadata:
   genre: Science Fiction
   short_title: The Last Signal
   last_name: Novelist
-  file_name: test_short_story.docx
-  story_type: short_story
-  include_title_page: false
+  file_name: test_manuscript.docx
+  story_type: Novel
+  include_title_page: true
 
 #=============================================================#
 # AUTHOR & AGENT: Contact Information                         #
@@ -53,5 +53,56 @@ agent:
 # The `type` key helps a compiler tool know how to format each section.
 
 structure:
-  - type: text
-    file: lorem.md
+  #----------- STANDALONE CHAPTER (PROLOGUE) -----------#
+  - type: chapter
+    title: "Prologue"
+    file: "tests/lorem.md"
+
+  #----------- BOOK PARTS & CHAPTERS -----------#
+  - type: part
+    title: "Part One: Echoes"
+    # Each part contains a list of its content.
+    content:
+      - type: chapter
+        number: 1
+        title: "A Ship in the Dark"
+        file: "tests/lorem.md"
+      - type: chapter
+        number: 2
+        title: "Whispers on the Comms"
+        files:
+          - "tests/lorem.md"
+          - "tests/lorem.md"
+          - "tests/lorem.md"
+      - type: chapter
+        number: 3
+        file: "tests/lorem.md"
+
+  - type: part
+    title: "Part Two: The Signal"
+    content:
+      - type: chapter
+        number: 4
+        file: "tests/lorem.md"
+      - type: chapter
+        number: 5
+        title: "The Message"
+        file: "tests/lorem.md"
+      - type: chapter
+        number: 6
+        file: "tests/lorem.md"
+
+  - type: part
+    title: "Part Three: Silence"
+    content:
+      - type: chapter
+        number: 7
+        title: "Alone"
+        file: "tests/lorem.md"
+      - type: chapter
+        number: 8
+        file: "tests/lorem.md"
+      - type: chapter
+        number: 9
+        title: "The Final Broadcast"
+        file: "tests/lorem.md"

@@ -26,4 +26,4 @@ dependencies = [
 package-dir = { "" = "src" }
 
 [project.scripts]
-mdmf = "my_cli_tool.main:main"
+mdmf = "markdown_manuscript_formatter.main:main"

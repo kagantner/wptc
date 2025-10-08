@@ -1,7 +1,7 @@
 import os
 import pytest
 from docx import Document
-from my_cli_tool.main import compile_manuscript
+from markdown_manuscript_formatter.main import compile_manuscript
 
 # Define the output directory for tests
 TEST_OUTPUT_DIR = "test_build"
@@ -38,7 +38,7 @@ def test_manuscript_with_title_page():
     Tests that a manuscript compiled with 'include_title_page: true'
     contains the author's legal name on the title page.
     """
-    config_file = "testbuild_novel.yaml"
+    config_file = "tests/testbuild_novel.yaml"
     compile_manuscript(config_file, TEST_OUTPUT_DIR)
 
     output_file = os.path.join(TEST_OUTPUT_DIR, "test_manuscript.docx")
@@ -52,7 +52,7 @@ def test_manuscript_without_title_page():
     Tests that a manuscript compiled with 'include_title_page: false'
     does NOT contain the author's legal name from the title page.
     """
-    config_file = "testbuild_short.yaml"
+    config_file = "tests/testbuild_short.yaml"
     compile_manuscript(config_file, TEST_OUTPUT_DIR)
 
     output_file = os.path.join(TEST_OUTPUT_DIR, "test_short_story.docx")
