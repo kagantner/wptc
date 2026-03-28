@@ -1,3 +1,12 @@
 .venv/
 venv/
 test_venv/
+
+# Rust build artifacts
+mdmf-rs/target/
+**/*.rs.bk
+
+# Other artifacts
+build/rust_novel.docx/
+__pycache__/
+*.pyc
