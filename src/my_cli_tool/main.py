@@ -330,8 +330,9 @@ def compile_manuscript(config_file, output_dir):
         else:
             print(f"--> WARNING: Unknown structure type '{item_type}' found. Skipping.")
     
-    # Add a final centered end mark on a new page.
-    doc.add_page_break()
+    # Add a final centered end mark after a couple new lines.
+    doc.add_paragraph()
+    doc.add_paragraph()
     p = doc.add_paragraph('#  #  #')
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     
