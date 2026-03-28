@@ -62,3 +62,65 @@ pub enum StructureItem {
         files: Option<Vec<String>>,
     },
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_deserialize_novel_config() {
+        let yaml = r#"
+metadata:
+  title: "A Great Novel"
+  byline: "John Doe"
+  short_title: "Great Novel"
+  last_name: "Doe"
+  story_type: "novel"
+author:
+  legal_name: "Jonathan Doe"
+  street_address: "123 Story Lane"
+  city_state_zip: "Booktown, NY 12345"
+  phone: "555-0100"
+  email: "john@example.com"
+structure:
+  - type: part
+    title: "Part One"
+    content:
+      - type: chapter
+        title: "The Beginning"
+        number: 1
+        file: "ch1.md"
+"#;
+        let config: Result<Config, _> = serde_yaml::from_str(yaml);
+        assert!(config.is_ok());
+        let config = config.unwrap();
+        assert_eq!(config.metadata.title, "A Great Novel");
+        assert_eq!(config.metadata.story_type.unwrap(), "novel");
+        assert_eq!(config.structure.len(), 1);
+    }
+
+    #[test]
+    fn test_deserialize_short_story_config() {
+        let yaml = r#"
+metadata:
+  title: "A Short Story"
+  byline: "Jane Doe"
+  short_title: "Short Story"
+  last_name: "Doe"
+author:
+  legal_name: "Jane Doe"
+  street_address: "456 Tale Blvd"
+  city_state_zip: "Storyville, CA 90210"
+  phone: "555-0200"
+  email: "jane@example.com"
+structure:
+  - type: text
+    file: "story.md"
+"#;
+        let config: Result<Config, _> = serde_yaml::from_str(yaml);
+        assert!(config.is_ok());
+        let config = config.unwrap();
+        assert_eq!(config.metadata.story_type, None);
+        assert_eq!(config.structure.len(), 1);
+    }
+}

@@ -9,3 +9,23 @@ pub struct Args {
     /// The directory where the compiled manuscript file will be saved (e.g., build/)
     pub output_dir: String,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_args_parsing() {
+        let args = Args::try_parse_from(["mdmf", "config.yaml", "out_dir"]);
+        assert!(args.is_ok());
+        let args = args.unwrap();
+        assert_eq!(args.config_file, "config.yaml");
+        assert_eq!(args.output_dir, "out_dir");
+    }
+
+    #[test]
+    fn test_missing_args() {
+        let args = Args::try_parse_from(["mdmf", "config.yaml"]);
+        assert!(args.is_err());
+    }
+}

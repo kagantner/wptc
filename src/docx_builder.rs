@@ -389,4 +389,40 @@ mod tests {
         // We can just verify it compiles and runs without panicking.
         let _ = run;
     }
+
+    #[test]
+    fn test_calculate_word_count() {
+        let temp_dir = std::env::temp_dir().join("mdmf_test_word_count");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        
+        let file_path = temp_dir.join("test_chapter.md");
+        let mut content = "Word ".repeat(60);
+        content.push_str("\n# Ignored Header\n% Ignored comment\n");
+        std::fs::write(&file_path, content).unwrap();
+        
+        let config = Config {
+            metadata: crate::config::Metadata {
+                title: "".into(), subtitle: None, byline: "".into(),
+                genre: None, short_title: "".into(), last_name: "".into(),
+                file_name: None, story_type: None,
+            },
+            author: crate::config::Author {
+                legal_name: "".into(), pen_name: None, street_address: "".into(),
+                city_state_zip: "".into(), phone: "".into(), email: "".into(),
+                website: None,
+            },
+            agent: None,
+            structure: vec![
+                crate::config::StructureItem::Chapter {
+                    title: None, number: None, file: Some("test_chapter.md".into()), files: None
+                }
+            ],
+        };
+        
+        let count = calculate_word_count(&config, &temp_dir).unwrap();
+        assert_eq!(count, 100); // 60 words rounds to nearest 100, which is 100
+        
+        std::fs::remove_dir_all(&temp_dir).unwrap();
+    }
 }
