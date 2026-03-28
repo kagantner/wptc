@@ -1,6 +1,6 @@
 [package]
 name = "mdmf"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 description = "Formats markdown text files into standard manuscript format for submissions. Works for short stories and multi-part novels."
 license = "MIT" # Or your preferred license, required for crates.io
