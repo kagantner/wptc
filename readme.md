@@ -1,6 +1,6 @@
 # Manuscript Compiler
 
-A Python script to compile a novel or long-form manuscript from a YAML configuration and individual Markdown files into a single, professionally formatted `.docx` file.
+A Rust CLI tool to compile a novel or long-form manuscript from a YAML configuration and individual Markdown files into a single, professionally formatted `.docx` file.
 
 ## Features
 
@@ -14,18 +14,14 @@ A Python script to compile a novel or long-form manuscript from a YAML configura
 
 ## Installation
 
-This script requires Python 3.
+This tool requires Rust/Cargo.
 
 1.  **Clone the repository or download the files.**
 
 2.  **Install the tool.**
-    Navigate to the root directory of the project (the one containing `pyproject.toml`) and run:
+    Navigate to the root directory of the project and run:
     ```bash
-    pip install .
-    ```
-    For development, you can install it in "editable" mode, which allows you to test your changes without reinstalling:
-    ```bash
-    pip install -e .
+    cargo install --path .
     ```
 
 ## Usage
