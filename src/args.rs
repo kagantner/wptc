@@ -8,6 +8,10 @@ pub struct Args {
 
     /// The directory where the compiled manuscript file will be saved (e.g., build/)
     pub output_dir: String,
+
+    /// If true, removes author name and contact info from the manuscript
+    #[arg(long)]
+    pub blind: bool,
 }
 
 #[cfg(test)]

@@ -5,7 +5,7 @@ use std::path::Path;
 use regex::Regex;
 use pulldown_cmark::{Parser, Options, Event};
 
-pub fn compile_manuscript(config_file: &str, output_dir: &str) -> Result<(), Box<dyn std::error::Error>> {
+pub fn compile_manuscript(config_file: &str, output_dir: &str, blind: bool) -> Result<(), Box<dyn std::error::Error>> {
     println!("Starting manuscript compilation from '{}'...", config_file);
 
     let config_content = fs::read_to_string(config_file)?;
@@ -26,8 +26,8 @@ pub fn compile_manuscript(config_file: &str, output_dir: &str) -> Result<(), Box
 
     let total_words = calculate_word_count(&config, config_dir).unwrap_or(0);
 
-    doc = setup_header(doc, &config);
-    doc = create_title_page(doc, &config, &story_type, total_words);
+    doc = setup_header(doc, &config, blind);
+    doc = create_title_page(doc, &config, &story_type, total_words, blind);
 
     let mut is_first_content_item = true;
 
@@ -103,7 +103,7 @@ fn calculate_word_count(config: &Config, config_dir: &Path) -> Result<usize, Box
         if let Ok(content) = fs::read_to_string(&actual_path) {
             for line in content.lines() {
                 let trimmed = line.trim();
-                if trimmed.is_empty() || heading_re.is_match(trimmed) || trimmed.starts_with('%') {
+                if trimmed.is_empty() || heading_re.is_match(trimmed) {
                     continue;
                 }
                 total_words += trimmed.split_whitespace().count();
@@ -151,14 +151,17 @@ fn format_number(mut n: usize) -> String {
     s.chars().rev().collect()
 }
 
-fn setup_header(doc: Docx, config: &Config) -> Docx {
+fn setup_header(doc: Docx, config: &Config, blind: bool) -> Docx {
     let last_name = &config.metadata.last_name;
     let short_title = &config.metadata.short_title;
     
-    let p = Paragraph::new()
-        .align(AlignmentType::Right)
-        .add_run(Run::new().add_text(format!("{} | ", last_name)))
-        .add_run(Run::new().add_text(short_title).italic())
+    let mut p = Paragraph::new().align(AlignmentType::Right);
+    
+    if !blind {
+        p = p.add_run(Run::new().add_text(format!("{} | ", last_name)));
+    }
+    
+    p = p.add_run(Run::new().add_text(short_title).italic())
         .add_run(Run::new().add_text(" | "))
         .add_run(
             Run::new()
@@ -175,7 +178,7 @@ fn setup_header(doc: Docx, config: &Config) -> Docx {
     doc.header(header).first_header(first_header)
 }
 
-fn create_title_page(mut doc: Docx, config: &Config, story_type: &str, word_count: usize) -> Docx {
+fn create_title_page(mut doc: Docx, config: &Config, story_type: &str, word_count: usize, blind: bool) -> Docx {
     let contact_block = vec![
         config.author.legal_name.clone(),
         config.author.street_address.clone(),
@@ -186,10 +189,12 @@ fn create_title_page(mut doc: Docx, config: &Config, story_type: &str, word_coun
     
     let left_para = {
         let mut p = Paragraph::new();
-        for (i, line) in contact_block.iter().enumerate() {
-            p = p.add_run(Run::new().add_text(line));
-            if i < contact_block.len() - 1 {
-                p = p.add_run(Run::new().add_break(BreakType::TextWrapping));
+        if !blind {
+            for (i, line) in contact_block.iter().enumerate() {
+                p = p.add_run(Run::new().add_text(line));
+                if i < contact_block.len() - 1 {
+                    p = p.add_run(Run::new().add_break(BreakType::TextWrapping));
+                }
             }
         }
         p
@@ -221,10 +226,12 @@ fn create_title_page(mut doc: Docx, config: &Config, story_type: &str, word_coun
 
     doc = doc.add_paragraph(Paragraph::new().align(AlignmentType::Center).add_run(Run::new().add_text(title_text).bold()));
     
-    let mut p_byline = Paragraph::new().align(AlignmentType::Center);
-    p_byline = p_byline.add_run(Run::new().add_text("by").add_break(BreakType::TextWrapping));
-    p_byline = p_byline.add_run(Run::new().add_text(&config.metadata.byline));
-    doc = doc.add_paragraph(p_byline);
+    if !blind {
+        let mut p_byline = Paragraph::new().align(AlignmentType::Center);
+        p_byline = p_byline.add_run(Run::new().add_text("by").add_break(BreakType::TextWrapping));
+        p_byline = p_byline.add_run(Run::new().add_text(&config.metadata.byline));
+        doc = doc.add_paragraph(p_byline);
+    }
 
     if story_type == "novel" {
         doc = doc.add_paragraph(Paragraph::new().add_run(Run::new().add_break(BreakType::Page)));
@@ -310,15 +317,26 @@ fn append_file_content(mut doc: Docx, filepath: &str, config_dir: &Path) -> Resu
     let heading_re = Regex::new(r"^#{1,6}\s")?;
     
     for line in content.lines() {
-        let trimmed = line.trim();
-        if trimmed.is_empty() || heading_re.is_match(trimmed) || trimmed.starts_with('%') {
+        let mut trimmed = line.trim();
+        if trimmed.is_empty() || heading_re.is_match(trimmed) {
             continue;
+        }
+
+        let mut is_blockquote = false;
+        if trimmed.starts_with('>') {
+            is_blockquote = true;
+            trimmed = trimmed[1..].trim_start();
         }
 
         let tokens_re = Regex::new(r"(\*{1,3}|_{1})")?;
         let mut p = Paragraph::new()
-            .indent(None, Some(SpecialIndentType::FirstLine(720)), None, None) // 0.5 inch (720 twips)
             .line_spacing(LineSpacing::new().line(480)); // Double spaced (240 * 2)
+
+        if is_blockquote {
+            p = p.indent(Some(720), None, Some(720), None); // 0.5 inch left and right
+        } else {
+            p = p.indent(None, Some(SpecialIndentType::FirstLine(720)), None, None); // 0.5 inch (720 twips)
+        }
 
         let mut is_bold = false;
         let mut is_italic = false;
@@ -398,7 +416,7 @@ mod tests {
         
         let file_path = temp_dir.join("test_chapter.md");
         let mut content = "Word ".repeat(60);
-        content.push_str("\n# Ignored Header\n% Ignored comment\n");
+        content.push_str("\n# Ignored Header\n# Ignored comment\n");
         std::fs::write(&file_path, content).unwrap();
         
         let config = Config {
@@ -423,6 +441,145 @@ mod tests {
         let count = calculate_word_count(&config, &temp_dir).unwrap();
         assert_eq!(count, 100); // 60 words rounds to nearest 100, which is 100
         
+        std::fs::remove_dir_all(&temp_dir).unwrap();
+    }
+
+    fn create_dummy_config() -> Config {
+        Config {
+            metadata: crate::config::Metadata {
+                title: "Test Title".into(), subtitle: None, byline: "Test Byline".into(),
+                genre: None, short_title: "Test Short Title".into(), last_name: "TestLast".into(),
+                file_name: Some("test_output.docx".into()), story_type: Some("novel".into()),
+            },
+            author: crate::config::Author {
+                legal_name: "Test Legal Name".into(), pen_name: None, street_address: "123 Test St".into(),
+                city_state_zip: "Test City, TS 12345".into(), phone: "555-5555".into(), email: "test@test.com".into(),
+                website: None,
+            },
+            agent: None,
+            structure: vec![],
+        }
+    }
+
+    #[test]
+    fn test_setup_header() {
+        let config = create_dummy_config();
+        
+        let doc_normal = setup_header(Docx::new(), &config, false);
+        let _ = doc_normal; // just checking for no panics
+
+        let doc_blind = setup_header(Docx::new(), &config, true);
+        let _ = doc_blind;
+    }
+
+    #[test]
+    fn test_create_title_page() {
+        let config = create_dummy_config();
+        
+        let doc_normal = create_title_page(Docx::new(), &config, "novel", 50000, false);
+        let _ = doc_normal;
+
+        let doc_blind = create_title_page(Docx::new(), &config, "novel", 50000, true);
+        let _ = doc_blind;
+    }
+
+    #[test]
+    fn test_process_chapter_and_text() {
+        let temp_dir = std::env::temp_dir().join("mdmf_test_chapter");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        
+        let file_path1 = temp_dir.join("ch1.md");
+        std::fs::write(&file_path1, "This is chapter one.\nIt has **bold** and *italic* text.").unwrap();
+
+        let file_path2 = temp_dir.join("text1.md");
+        std::fs::write(&file_path2, "This is some unstructured text.").unwrap();
+
+        let chapter = crate::config::StructureItem::Chapter {
+            title: Some("Chapter One".into()), number: Some(1), file: Some("ch1.md".into()), files: None
+        };
+
+        let text_item = crate::config::StructureItem::Text {
+            file: Some("text1.md".into()), files: None
+        };
+
+        let doc = Docx::new();
+        let doc = process_chapter(&chapter, doc, "novel", &temp_dir).expect("Failed to process chapter");
+        let doc = process_text_item(&text_item, doc, &temp_dir).expect("Failed to process text item");
+        
+        let _ = doc; // verify we got here safely
+
+        std::fs::remove_dir_all(&temp_dir).unwrap();
+    }
+
+    #[test]
+    fn test_append_file_content() {
+        let temp_dir = std::env::temp_dir().join("mdmf_test_append");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        std::fs::create_dir_all(&temp_dir).unwrap();
+        
+        let file_path = temp_dir.join("append.md");
+        std::fs::write(&file_path, "Content to append.\n> Blockquote text.\nWith a second line.").unwrap();
+
+        let doc = Docx::new();
+        let doc = append_file_content(doc, "append.md", &temp_dir).expect("Failed to append");
+        let _ = doc;
+
+        // Test missing file
+        let doc_missing = append_file_content(Docx::new(), "missing.md", &temp_dir).expect("Failed on missing file, should return ok and skip");
+        let _ = doc_missing;
+
+        std::fs::remove_dir_all(&temp_dir).unwrap();
+    }
+
+    #[test]
+    fn test_compile_manuscript_integration() {
+        let temp_dir = std::env::temp_dir().join("mdmf_test_integration");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        std::fs::create_dir_all(&temp_dir).unwrap();
+
+        let md_file = temp_dir.join("content.md");
+        std::fs::write(&md_file, "Integration test content with ***bold-italic*** formatting.").unwrap();
+
+        let yaml_file = temp_dir.join("build.yaml");
+        let yaml_content = r#"
+metadata:
+  title: "Integration Test"
+  byline: "Integration Author"
+  short_title: "Integration"
+  last_name: "Author"
+  file_name: "integrated_output.docx"
+  story_type: "short_story"
+author:
+  legal_name: "Legal Integration"
+  street_address: "123 Integration Blvd"
+  city_state_zip: "Integration City, IC 12345"
+  phone: "555-9999"
+  email: "integration@example.com"
+structure:
+  - type: chapter
+    title: "The Content"
+    file: "content.md"
+"#;
+        std::fs::write(&yaml_file, yaml_content).unwrap();
+
+        let out_dir = temp_dir.join("build");
+        
+        // Test normal compilation
+        let res = compile_manuscript(yaml_file.to_str().unwrap(), out_dir.to_str().unwrap(), false);
+        assert!(res.is_ok());
+        
+        let out_file = out_dir.join("integrated_output.docx");
+        assert!(out_file.exists());
+
+        // Test blind compilation
+        let out_dir_blind = temp_dir.join("build_blind");
+        let res_blind = compile_manuscript(yaml_file.to_str().unwrap(), out_dir_blind.to_str().unwrap(), true);
+        assert!(res_blind.is_ok());
+
+        let out_file_blind = out_dir_blind.join("integrated_output.docx");
+        assert!(out_file_blind.exists());
+
         std::fs::remove_dir_all(&temp_dir).unwrap();
     }
 }
